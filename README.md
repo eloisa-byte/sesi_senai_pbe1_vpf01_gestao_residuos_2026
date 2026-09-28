@@ -71,4 +71,4 @@ npm install
 
 <br>
 
-![cliente](print2.jpg])
+![cliente](print2.jpg)
