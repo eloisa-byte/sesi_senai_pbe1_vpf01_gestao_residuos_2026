@@ -56,7 +56,7 @@ npm install
 - UPDATE
 ![put](teste_put_atualizar.jpg)
 
-- DELTE
+- DELETE
 ![delete](teste_delete.jpg)
 
 ---
@@ -64,3 +64,11 @@ npm install
 ## Cliente
 
 ![formulario](formulario.jpg)
+
+<br>
+
+![client](print1.jpg)
+
+<br>
+
+![cliente](print2.jpg])

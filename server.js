@@ -1,142 +1,192 @@
 const express = require("express");
-const fs = require("fs");
+const cors = require("cors");
 
-const app = express();
+const ocorrencias = require("./dados.json");
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("client"));
-
-const arquivo = "./dados.json";
-
-function lerDados() {
-    const dados = fs.readFileSync(arquivo, "utf8");
-    return JSON.parse(dados);
-}
-
-function salvarDados(dados) {
-    fs.writeFileSync(arquivo, JSON.stringify(dados, null, 2));
+function autoIncrement() {
+    return Number(ocorrencias[ocorrencias.length - 1].id) + 1;
 }
 
 
-app.get("/ocorrencias", (req, res) => {
-    const dados = lerDados();
+const cadastrarOcorrencia = (req, res) => {
 
-    res.json(dados);
-});
+    const ocorrencia = req.body;
+
+    ocorrencia.id = autoIncrement();
+
+    ocorrencias.push(ocorrencia);
+
+    res.status(201).json(ocorrencia);
+};
 
 
-app.get("/ocorrencias/:id", (req, res) => {
-    const dados = lerDados();
+const listarOcorrencias = (req, res) => {
 
-    const id = Number(req.params.id);
+    res.status(200).json(ocorrencias);
 
-    const ocorrencia = dados.find(item => item.id === id);
+};
 
-    if (!ocorrencia) {
-        return res.status(404).json({
-            mensagem: "Ocorrência não encontrada"
-        });
+
+const buscarOcorrencia = (req, res) => {
+
+    const ocorrencia = ocorrencias.find(
+        e => e.id == Number(req.params.id)
+    );
+
+    if (ocorrencia) {
+
+        res.json(ocorrencia);
+
+    } else {
+
+        res.status(404).json("Id não encontrado");
+
     }
 
-    res.json(ocorrencia);
-});
+};
 
 
-app.get("/ocorrencias/local/:local", (req, res) => {
-    const dados = lerDados();
+const buscarLocal = (req, res) => {
 
     const local = req.params.local.toLowerCase();
 
-    const ocorrencias = dados.filter(item =>
-        item.local.toLowerCase().includes(local)
+    const resultado = ocorrencias.filter(
+        e => e.local.toLowerCase().includes(local)
     );
 
-    res.json(ocorrencias);
-});
+    if (resultado.length > 0) {
+
+        res.json(resultado);
+
+    } else {
+
+        res.status(404).json("Local não encontrado");
+
+    }
+
+};
 
 
-app.get("/ocorrencias/tipo/:tipo", (req, res) => {
-    const dados = lerDados();
+const buscarTipoResiduo = (req, res) => {
 
     const tipo = req.params.tipo.toLowerCase();
 
-    const ocorrencias = dados.filter(item =>
-        item.tipo_residuo.toLowerCase() === tipo
+    const resultado = ocorrencias.filter(
+        e => e.tipo_residuo.toLowerCase() == tipo
     );
 
-    res.json(ocorrencias);
-});
+    if (resultado.length > 0) {
 
+        res.json(resultado);
 
-app.post("/ocorrencias", (req, res) => {
-    const dados = lerDados();
+    } else {
 
-    const novaOcorrencia = req.body;
+        res.status(404).json("Tipo de resíduo não encontrado");
 
-    const novoId = dados.length > 0
-        ? Math.max(...dados.map(item => item.id)) + 1
-        : 1;
-
-    novaOcorrencia.id = novoId;
-
-    dados.push(novaOcorrencia);
-
-    salvarDados(dados);
-
-    res.status(201).json(novaOcorrencia);
-});
-
-
-app.put("/ocorrencias/:id", (req, res) => {
-    const dados = lerDados();
-
-    const id = Number(req.params.id);
-
-    const indice = dados.findIndex(item => item.id === id);
-
-    if (indice === -1) {
-        return res.status(404).json({
-            mensagem: "Ocorrência não encontrada"
-        });
     }
 
-    dados[indice] = {
-        ...dados[indice],
-        ...req.body,
-        id: id
-    };
-
-    salvarDados(dados);
-
-    res.json(dados[indice]);
-});
+};
 
 
-app.delete("/ocorrencias/:id", (req, res) => {
-    const dados = lerDados();
+const atualizarOcorrencia = (req, res) => {
 
-    const id = Number(req.params.id);
+    const id = req.params.id;
 
-    const indice = dados.findIndex(item => item.id === id);
+    const dados = req.body;
 
-    if (indice === -1) {
-        return res.status(404).json({
-            mensagem: "Ocorrência não encontrada"
-        });
-    }
+    let status = 0;
 
-    const removida = dados.splice(indice, 1)[0];
+    ocorrencias.forEach((ocorrencia, indice) => {
 
-    salvarDados(dados);
+        if (ocorrencia.id == id) {
 
-    res.json({
-        mensagem: "Ocorrência excluída com sucesso",
-        ocorrencia: removida
+            ocorrencias[indice] = {
+                ...ocorrencia,
+                ...dados,
+                id: Number(id)
+            };
+
+            status = 1;
+
+        }
+
     });
+
+    if (status == 1) {
+
+        res.status(202).json(
+            ocorrencias.find(e => e.id == Number(id))
+        );
+
+    } else {
+
+        res.status(404).send("Ocorrência não encontrada");
+
+    }
+
+};
+
+
+const excluirOcorrencia = (req, res) => {
+
+    const id = req.params.id;
+
+    let status = 0;
+
+    ocorrencias.forEach((ocorrencia, indice) => {
+
+        if (ocorrencia.id == id) {
+
+            ocorrencias.splice(indice, 1);
+
+            status = 1;
+
+        }
+
+    });
+
+    if (status == 1) {
+
+        res.json("Ocorrência excluída com sucesso");
+
+    } else {
+
+        res.status(404).send("Ocorrência não encontrada");
+
+    }
+
+};
+
+
+const app = express();
+
+app.use(cors());
+
+app.use(express.urlencoded({ extended: true }));
+
+app.use(express.json());
+
+const porta = 3000;
+
+
+app.get("/", (req, res) => {
+
+    res.send("Servidor funcionando! Acesse /ocorrencias para ver as ocorrências.");
+
 });
 
 
-app.listen(3000, () => {
-    console.log("Servidor rodando em http://localhost:3000");
+app.post("/ocorrencias", cadastrarOcorrencia);
+app.get("/ocorrencias", listarOcorrencias);
+app.get("/ocorrencias/local/:local", buscarLocal);
+app.get("/ocorrencias/tipo/:tipo", buscarTipoResiduo);
+app.get("/ocorrencias/:id", buscarOcorrencia);
+app.put("/ocorrencias/:id", atualizarOcorrencia);
+app.delete("/ocorrencias/:id", excluirOcorrencia);
+
+
+app.listen(porta, () => {
+
+    console.log(`Servidor respondendo em: http://localhost:${porta}`);
+
 });
