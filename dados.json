@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "local": "Rua Cecília, 189",
+    "tipo_residuo": "Eletrônico",
+    "nivel_risco": "alto",
+    "data_registro": "2026-09-23",
+    "status": "Em análise"
+  },
+  {
+    "id": 2,
+    "local": "Avenida Brasil, 450",
+    "tipo_residuo": "Entulho",
+    "nivel_risco": "Médio",
+    "data_registro": "2026-09-22",
+    "status": "Em análise"
+  },
+  {
+    "id": 3,
+    "local": "Rua das Palmeiras, 80",
+    "tipo_residuo": "Lixo",
+    "nivel_risco": "Baixo",
+    "data_registro": "2026-09-21",
+    "status": "Resolvido"
+  },
+  {
+    "id": 4,
+    "local": "Rua São Paulo, 300",
+    "tipo_residuo": "Eletrônico",
+    "nivel_risco": "Alto",
+    "data_registro": "2026-09-20",
+    "status": "Pendente"
+  },
+  {
+    "local": "Rua Nova, 500",
+    "tipo_residuo": "Lixo",
+    "nivel_risco": "baixo",
+    "data_registro": "2026-09-24",
+    "status": "Pendente",
+    "id": 6
+  }
+]

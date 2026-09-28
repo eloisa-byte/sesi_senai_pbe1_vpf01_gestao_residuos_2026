@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Resíduos</title>
+</head>
+
+<body style="align-items: center;">
+    <header>
+        <h1>Gestão Resíduos</h1>
+    </header>
+    <main>
+        <section>
+            <form action="http://localhost:3000/bens" method="post">
+                <input type="text" name="item" placeholder="Local" required>
+                <input type="text" name="local" placeholder="Tipo de Resíduo" required>
+                <input type="text" name="patrimonio" placeholder="Nível de Risco" required>
+                <input type="text" name="patrimonio" placeholder="Status" required>
+                <input type="date" name="data" required>
+                <input type="submit" value="Enviar">
+            </form>
+                <tbody id="tabela">
+                    <script>
+                        fetch("http://localhost:3000/bens")
+                        .then(resp=>resp.json())
+                        .then(resp=>{
+                            resp.forEach(p=>{
+                                const linha = document.createElement("tr")
+                                linha.innerHTML=`
+                                <td>${p.item}</td>
+                                <td>${p.local}</td>
+                                <td>${p.data}</td>
+                                <td>${p.valor}</td>
+                                <td>${p.patrimonio}</td>
+                                `
+                                tabela.appendChild(linha)
+                            })
+                        })
+                    </script>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <h2>By eloisa-byte</h2>
+    </footer>
+</body>
+
+</html>
