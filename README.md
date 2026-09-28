@@ -48,7 +48,7 @@ npm install
 ![post](teste_post_cadastrar.jpg)
 
 - READ ALL
-![get](teste_get.jpg)
+![get](teste_get.png.jpg)
 
 - BUSCAR
 ![get](teste_get_id.jpg)
